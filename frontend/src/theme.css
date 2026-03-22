@@ -1,4 +1,45 @@
-/* Neon theme overrides on top of Bootstrap */
+/* Autocomplete */
+.autocomplete-wrapper {
+  position: relative;
+  width: 420px;
+  max-width: 100%;
+}
+
+.autocomplete-wrapper .search-input {
+  width: 100%;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #0d1130;
+  border: 1.5px solid #0080ff;
+  border-radius: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  z-index: 100;
+  box-shadow: 0 8px 30px rgba(0, 128, 255, 0.3);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.autocomplete-item {
+  padding: 0.55rem 1rem;
+  font-size: 0.92rem;
+  color: #c8ddf0;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+  background: rgba(0, 128, 255, 0.2);
+  color: #39ff14;
+}
+
 
 body {
   background: #070714;

@@ -38,4 +38,6 @@ INSTALL DEPENDENCIES
 .venv/bin/python3 system.py
 
 ******terminal 2:**********
-cd frontend && npm run dev
+cd frontend
+cp .env.example .env
+npm run dev
