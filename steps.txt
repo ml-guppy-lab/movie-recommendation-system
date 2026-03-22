@@ -67,4 +67,7 @@ Signin with github
 * Root Directory: frontend
 * Publish directory: build (for Create React App) ordist (for Vite / modern setups)
   use dist since we're using Vite
+* enter environment variables
+VITE_TMDB_API_KEY
+VITE_BACKEND_URL (get it from the sucessful backend deployment)
 * deploy static site

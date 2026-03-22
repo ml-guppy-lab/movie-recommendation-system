@@ -1,5 +1,6 @@
 import ast
 import os
+from contextlib import asynccontextmanager
 
 import numpy as np
 import pandas as pd
@@ -77,14 +78,23 @@ def _build_model():
     return df, top5_map
 
 
-print("Building recommendation model...")
-_df, _top5_map = _build_model()
-print(f"Model ready. {len(_df)} movies loaded.")
+# ── App state ────────────────────────────────────────────────────────────────
+
+_state = {}
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Runs after the port is open — Render won't time out waiting
+    print("Building recommendation model...")
+    _state['df'], _state['top5_map'] = _build_model()
+    print(f"Model ready. {len(_state['df'])} movies loaded.")
+    yield
+    _state.clear()
 
 
 # ── FastAPI app ───────────────────────────────────────────────────────────────
 
-app = FastAPI(title="Movie Recommender API")
+app = FastAPI(title="Movie Recommender API", lifespan=lifespan)
 
 # CORS — set ALLOWED_ORIGINS env var in production (comma-separated URLs)
 # e.g. https://your-frontend.onrender.com,https://your-custom-domain.com
@@ -105,27 +115,29 @@ app.add_middleware(
 @app.get("/movies")
 def list_movies():
     """Return all available movie titles (useful for autocomplete in the UI)."""
-    return {"movies": _df['title'].tolist()}
+    return {"movies": _state['df']['title'].tolist()}
 
 
 @app.get("/recommend")
 def recommend(movie: str):
     """Return 5 movie recommendations for a given title."""
-    matches = _df[_df['title'].str.lower() == movie.lower()]
+    df = _state['df']
+    top5_map = _state['top5_map']
+    matches = df[df['title'].str.lower() == movie.lower()]
     if matches.empty:
         raise HTTPException(status_code=404, detail=f"Movie '{movie}' not found.")
 
     movie_index = matches.index[0]
-    top5_indices = _top5_map[movie_index]
+    top5_indices = top5_map[movie_index]
     recommendations = [
-        {"title": _df.iloc[i]['title'], "movie_id": int(_df.iloc[i]['movie_id'])}
+        {"title": df.iloc[i]['title'], "movie_id": int(df.iloc[i]['movie_id'])}
         for i in top5_indices
     ]
 
     return {
         "movie": {
-            "title": _df.iloc[movie_index]['title'],
-            "movie_id": int(_df.iloc[movie_index]['movie_id'])
+            "title": df.iloc[movie_index]['title'],
+            "movie_id": int(df.iloc[movie_index]['movie_id'])
         },
         "recommendations": recommendations
     }
