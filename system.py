@@ -97,9 +97,18 @@ def recommend(movie: str):
     movie_index = matches.index[0]
     distances = _similarity[movie_index]
     top5 = sorted(enumerate(distances), key=lambda x: x[1], reverse=True)[1:6]
-    recommendations = [_df.iloc[i[0]]['title'] for i in top5]
+    recommendations = [
+        {"title": _df.iloc[i[0]]['title'], "movie_id": int(_df.iloc[i[0]]['movie_id'])}
+        for i in top5
+    ]
 
-    return {"movie": _df.iloc[movie_index]['title'], "recommendations": recommendations}
+    return {
+        "movie": {
+            "title": _df.iloc[movie_index]['title'],
+            "movie_id": int(_df.iloc[movie_index]['movie_id'])
+        },
+        "recommendations": recommendations
+    }
 
 
 if __name__ == "__main__":

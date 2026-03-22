@@ -34,5 +34,8 @@ INSTALL DEPENDENCIES
 .venv/bin/python3 -m pip install -r requirements.txt
 
 
-
+******terminal 1:**********
 .venv/bin/python3 system.py
+
+******terminal 2:**********
+cd frontend && npm run dev

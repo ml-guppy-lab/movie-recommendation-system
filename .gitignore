@@ -1,3 +1,21 @@
+# Logs
+*.log
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Environment variables
+.env
+.env.*
+
 # Virtual environments
 .venv/
 venv/
@@ -9,6 +27,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.so
 
 # Distribution / packaging
 dist/
@@ -20,27 +39,15 @@ build/
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# Byte-compiled files
-*.so
-
-# Environment variables
-.env
-.env.*
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# IDE / editor
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
-*.log
-
 # pip
 pip-log.txt
 pip-delete-this-directory.txt
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/.env
+frontend/.env.*
+
