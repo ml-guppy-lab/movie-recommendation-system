@@ -83,16 +83,19 @@ def _build_model():
 
 _state = {}
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Run model build in a thread so the event loop stays free
-    # Render can detect the port and serve health checks while it loads
-    print("Building recommendation model...")
-    loop = asyncio.get_event_loop()
+async def _load_model_background():
+    """Build model on a thread pool — doesn't block the event loop."""
+    loop = asyncio.get_running_loop()
+    print("Building recommendation model in background...")
     df, top5_map = await loop.run_in_executor(None, _build_model)
     _state['df'] = df
     _state['top5_map'] = top5_map
     print(f"Model ready. {len(_state['df'])} movies loaded.")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Fire-and-forget: model builds in background, port opens immediately
+    asyncio.create_task(_load_model_background())
     yield
     _state.clear()
 
@@ -117,15 +120,23 @@ app.add_middleware(
 )
 
 
+@app.get("/health")
+def health():
+    return {"status": "ok", "model_ready": 'df' in _state}
+
+
 @app.get("/movies")
 def list_movies():
-    """Return all available movie titles (useful for autocomplete in the UI)."""
+    if 'df' not in _state:
+        raise HTTPException(status_code=503, detail="Model is still loading, please try again shortly.")
     return {"movies": _state['df']['title'].tolist()}
 
 
 @app.get("/recommend")
 def recommend(movie: str):
     """Return 5 movie recommendations for a given title."""
+    if 'df' not in _state:
+        raise HTTPException(status_code=503, detail="Model is still loading, please try again shortly.")
     df = _state['df']
     top5_map = _state['top5_map']
     matches = df[df['title'].str.lower() == movie.lower()]
