@@ -71,3 +71,6 @@ Signin with github
 VITE_TMDB_API_KEY
 VITE_BACKEND_URL (get it from the sucessful backend deployment)
 * deploy static site
+
+You may have to change the code a little bit according to render like loading the model in the background, 
+opening the port during build, etc. for a successfull deployment.

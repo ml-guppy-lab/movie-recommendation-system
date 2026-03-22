@@ -1,5 +1,9 @@
 # 🎬 Movie Recommendation System
 
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-movie--rec--frontend.onrender.com-39ff14?style=for-the-badge)](https://movie-rec-frontend.onrender.com/)
+
+> **[👉 Click here to try the live app](https://movie-rec-frontend.onrender.com/)**
+
 A content-based movie recommendation engine built with Python and React — type a movie name and instantly get 5 similar recommendations with posters.
 
 ---
