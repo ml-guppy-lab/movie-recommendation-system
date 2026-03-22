@@ -1,5 +1,6 @@
 import ast
 import os
+import asyncio
 from contextlib import asynccontextmanager
 
 import numpy as np
@@ -84,9 +85,13 @@ _state = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Runs after the port is open — Render won't time out waiting
+    # Run model build in a thread so the event loop stays free
+    # Render can detect the port and serve health checks while it loads
     print("Building recommendation model...")
-    _state['df'], _state['top5_map'] = _build_model()
+    loop = asyncio.get_event_loop()
+    df, top5_map = await loop.run_in_executor(None, _build_model)
+    _state['df'] = df
+    _state['top5_map'] = top5_map
     print(f"Model ready. {len(_state['df'])} movies loaded.")
     yield
     _state.clear()
