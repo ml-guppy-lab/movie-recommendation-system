@@ -59,14 +59,26 @@ def _build_model():
                   .apply(_stem))
 
     cv = CountVectorizer(max_features=5000, stop_words='english')
-    vectors = cv.fit_transform(df['tags']).toarray()
+    # float32 halves memory vs float64
+    vectors = cv.fit_transform(df['tags']).toarray().astype('float32')
     sim = cosine_similarity(vectors)
+    del vectors  # free immediately
 
-    return df, sim
+    # Precompute top-5 indices for every movie, then discard full matrix
+    top5_map = {}
+    for idx in range(len(df)):
+        top5_map[idx] = [
+            i for i, _ in
+            sorted(enumerate(sim[idx]), key=lambda x: x[1], reverse=True)[1:6]
+        ]
+    del sim  # full matrix no longer needed
+
+    df = df.reset_index(drop=True)
+    return df, top5_map
 
 
 print("Building recommendation model...")
-_df, _similarity = _build_model()
+_df, _top5_map = _build_model()
 print(f"Model ready. {len(_df)} movies loaded.")
 
 
@@ -104,11 +116,10 @@ def recommend(movie: str):
         raise HTTPException(status_code=404, detail=f"Movie '{movie}' not found.")
 
     movie_index = matches.index[0]
-    distances = _similarity[movie_index]
-    top5 = sorted(enumerate(distances), key=lambda x: x[1], reverse=True)[1:6]
+    top5_indices = _top5_map[movie_index]
     recommendations = [
-        {"title": _df.iloc[i[0]]['title'], "movie_id": int(_df.iloc[i[0]]['movie_id'])}
-        for i in top5
+        {"title": _df.iloc[i]['title'], "movie_id": int(_df.iloc[i]['movie_id'])}
+        for i in top5_indices
     ]
 
     return {
