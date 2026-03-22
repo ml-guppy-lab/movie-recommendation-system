@@ -1,4 +1,5 @@
 import ast
+import os
 
 import numpy as np
 import pandas as pd
@@ -73,9 +74,17 @@ print(f"Model ready. {len(_df)} movies loaded.")
 
 app = FastAPI(title="Movie Recommender API")
 
+# CORS — set ALLOWED_ORIGINS env var in production (comma-separated URLs)
+# e.g. https://your-frontend.onrender.com,https://your-custom-domain.com
+_raw_origins = os.environ.get("ALLOWED_ORIGINS", "")
+_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+if not _origins:
+    _origins = ["*"]  # fallback for local dev
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

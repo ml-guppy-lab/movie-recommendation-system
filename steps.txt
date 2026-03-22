@@ -41,3 +41,10 @@ INSTALL DEPENDENCIES
 cd frontend
 cp .env.example .env
 npm run dev
+
+
+------------------------------------------------------------------------------
+DEPLOYMENT STEPS
+------------------------------------------------------------------------------
+Go to https://render.com (or dashboard.render.com)
+Signin with github
