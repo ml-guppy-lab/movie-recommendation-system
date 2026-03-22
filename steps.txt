@@ -48,3 +48,23 @@ DEPLOYMENT STEPS
 ------------------------------------------------------------------------------
 Go to https://render.com (or dashboard.render.com)
 Signin with github
+
+1. Deploy the FastAPI Backend as a Web Service
+* Click New → Web Service
+* Connect your GitHub account if not already done → select your repo
+* Name: something like movie-rec-backend (this becomes part of the URL)
+* start command: uvicorn system:app --host 0.0.0.0 --port $PORT
+* instance type: free
+* deploy web service
+* Wait 2–5 minutes → watch the build & deploy logs
+* Once live → note the URL: https://movie-rec-backend.onrender.com
+(test it: add /docs → you should see Swagger UI if you have it enabled)
+
+2. Deploy the React Frontend as a Static Site
+* Back on dashboard → click New → Static Site
+* Connect same GitHub repo
+* Name: movie-rec-frontend
+* Root Directory: frontend
+* Publish directory: build (for Create React App) ordist (for Vite / modern setups)
+  use dist since we're using Vite
+* deploy static site
