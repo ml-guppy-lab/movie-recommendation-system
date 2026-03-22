@@ -11,7 +11,7 @@ host=github.com
 cd /path/to/your/new/repo
 git config user.email "sonalsh250@gmail.com"
 
-initialize repository: git remote add origin https://github.com/ml-guppy-lab/fire_writing.git
+initialize repository: git remote add origin https://github.com/ml-guppy-lab/movie-recommendation-system.git
 
 git branch --set-upstream-to=origin/main main
 
@@ -35,5 +35,4 @@ INSTALL DEPENDENCIES
 
 
 
-.venv/bin/python3 vocal.py
-.venv/bin/python3 vocal_painter.py
+.venv/bin/python3 system.py
